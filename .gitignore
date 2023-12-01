@@ -1,0 +1,4 @@
+.DS_Store
+# Ignore compiled files and input text.
+*a.out
+*input.txt
