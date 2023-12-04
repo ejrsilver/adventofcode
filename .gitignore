@@ -2,3 +2,4 @@
 # Ignore compiled files and input text.
 *a.out
 *input.txt
+*test.txt
