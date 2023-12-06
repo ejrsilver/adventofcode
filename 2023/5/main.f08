@@ -41,6 +41,11 @@ program main
         end if
     end do
 
+    ! Sort maps.
+    do i=1,7
+        call sortmap(maps(i, :, :))
+    end do
+
     call part1(seeds, maps, out)
     print '(i0)', out
 
@@ -81,19 +86,11 @@ subroutine part2(seeds, maps, out)
     integer*8, dimension(20), intent(in) :: seeds
     integer*8, intent(out) :: out
     integer*8 :: val, i, j, getmap, outval
-    integer*8, dimension(7,128,3) :: minmaps
     outval = 1000000000
-    ! Run through each seed init and range.
-
-    ! Logic: Map Range 10000 - 20000
-    ! Seed Range: 15000 - 25000
-
-    call minimizemaps(maps, minmaps)
-
-    do concurrent i=1,10,2
-        if (seeds(i) .ge. 0 .and. seeds(i+1) .ge. 0) then
-            j = seeds(i)
-            do concurrent (j = seeds(i):seeds(i)+seeds(i+1))
+    do i=1,20,2
+        if (seeds(i) .ge. 0) then
+            do j=seeds(i),seeds(i)+seeds(i+1)-1
+                print *, "Processing seed: ", j
                 val = getmap(j, maps(1, :, :))
                 val = getmap(val, maps(2, :, :))
                 val = getmap(val, maps(3, :, :))
@@ -111,16 +108,37 @@ subroutine part2(seeds, maps, out)
     out = outval
 end subroutine
 
+subroutine sortmap(map)
+    integer*8, dimension(128, 3), intent(inout) :: map
+    integer*8 :: i
+    integer*8, dimension(3) :: val, tmp
+    i = 1
+    do while(map(i,1) .ge. 0)
+        j = i
+        do while(map(j,1) .ge. 0)
+            if (map(i,2)+map(i,3) .lt. map(j,2)+map(j,3)) then
+                tmp = map(i, :)
+                map(i, :) = map(j, :)
+                map(j, :) = tmp
+            end if
+            j = j + 1
+        end do
+        i = i + 1
+    end do
+end subroutine
+
 integer*8 function getmap(seed, map)
     implicit none
     integer*8, intent(in) :: seed
     integer*8, dimension(128, 3), intent(in) :: map
     integer*8 :: j, val
     getmap = seed
-    do j=1,128
+    j = 1
+    do while (map(j,1) .ge. 0)
         if (map(j,2) .le. seed .and. seed .le. map(j,2) + map(j,3) - 1) then
             getmap = seed + map(j,1) - map(j,2)
-            exit
+            return
         end if
+        j = j +1
     end do
 end function getmap
