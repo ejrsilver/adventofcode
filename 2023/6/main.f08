@@ -64,7 +64,7 @@ subroutine part2(rounds, rlen, out)
     integer, intent(in) :: rlen
     integer, dimension(rlen, 2), intent(in) :: rounds
     integer*16, intent(out) :: out
-    integer*16 :: i, j, err, time, dist
+    integer*16 :: i, j, err, time, dist, mint, maxt
     character*256 :: ctmp, val
 
     ! There's only one round, concatenate the values.
@@ -82,11 +82,19 @@ subroutine part2(rounds, rlen, out)
     read(val, *) dist
 
     out = 0
-    ! For each possible millisecond in that round.
+    ! Run until we hit the first correct instance.
     do j=1,time
-        print *, j
         if((time-j)*j .gt. dist) then
-            out = out + 1
+            mint = j
+            exit
         end if
     end do
+    ! Run until we hit the last correct instance.
+    do j=time,1,-1
+        if((time-j)*j .gt. dist) then
+            maxt = j
+            exit
+        end if
+    end do
+    out = maxt - mint + 1
 end subroutine

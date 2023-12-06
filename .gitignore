@@ -1,5 +1,7 @@
 .DS_Store
 # Ignore compiled files and input text.
 *a.out
+*a.exe
+*fort.12
 *input.txt
 *test.txt
