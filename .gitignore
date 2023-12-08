@@ -5,5 +5,4 @@
 *.mod
 *a.exe
 *fort.12
-*input.txt
-*test.txt
+*.txt
